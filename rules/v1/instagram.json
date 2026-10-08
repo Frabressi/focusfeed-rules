@@ -1,8 +1,127 @@
 {
-  "version": 1,
+  "version": 2,
   "minAppVersion": 1,
-  "updatedAt": "2026-10-08T00:00:00Z",
-  "rules": [],
+  "updatedAt": "2026-10-08T12:00:00Z",
+  "rules": [
+    {
+      "id": "redirect-home-following",
+      "type": "redirect",
+      "from": "^https://www\\.instagram\\.com/?$",
+      "to": "https://www.instagram.com/?variant=following",
+      "comment": "Navigazioni main-frame verso la home ('Per te') portate al feed Seguiti. Le navigazioni SPA (pushState) non passano di qui: vedi hide-nav-home."
+    },
+    {
+      "id": "hide-nav-home",
+      "type": "hide_css",
+      "selector": "a[href=\"/\"]:has(svg), a[href=\"https://www.instagram.com/\"]:has(svg)",
+      "comment": "Nasconde icona Home e logo che portano via SPA al feed algoritmico; il feed Seguiti e' nella barra nativa."
+    },
+    {
+      "id": "hide-nav-reels",
+      "type": "hide_css",
+      "selector": "a[href$=\"/reels/\"], a[href^=\"/reels/\"], a[href^=\"https://www.instagram.com/reels/\"], a:has(svg[aria-label=\"Reels\"])",
+      "comment": "Link/icone verso Reels: tab di navigazione e tab Reels nei profili (href /utente/reels/ o icona svg aria-label=\"Reels\", verificato su profilo pubblico)."
+    },
+    {
+      "id": "hide-nav-explore",
+      "type": "hide_css",
+      "selector": "a[href^=\"/explore/\"]:not([href^=\"/explore/search\"]), a[href^=\"https://www.instagram.com/explore/\"]:not([href^=\"https://www.instagram.com/explore/search\"]), a:has(svg[aria-label=\"Esplora\"]), a:has(svg[aria-label=\"Explore\"])",
+      "comment": "Link/icone verso Esplora (inclusi hashtag, luoghi, 'Vedi tutti' dei suggeriti). Resta solo /explore/search/."
+    },
+    {
+      "id": "overlay-reels",
+      "type": "block_overlay",
+      "urlPattern": "^https://www\\.instagram\\.com/(?:reels|[^/?#]+/reels)(?:[/?#]|$)",
+      "message": "Reels bloccati da FocusFeed.",
+      "comment": "Feed Reels e tab Reels dei profili, anche raggiunti via SPA."
+    },
+    {
+      "id": "overlay-reel-single",
+      "type": "block_overlay",
+      "urlPattern": "^https://www\\.instagram\\.com/(?:[^/?#]+/)?reel/",
+      "message": "Reel bloccato.",
+      "comment": "Singoli reel (/reel/ID e /utente/reel/ID), anche aperti da un DM."
+    },
+    {
+      "id": "overlay-explore",
+      "type": "block_overlay",
+      "urlPattern": "^https://www\\.instagram\\.com/explore(?!/search(?:[/?#]|$))(?:[/?#]|$)",
+      "message": "Esplora e' bloccato. Usa Cerca per trovare persone.",
+      "comment": "Esplora, hashtag, luoghi, persone suggerite; esclusa solo /explore/search/."
+    },
+    {
+      "id": "hide-sponsored-posts",
+      "type": "hide_has_text",
+      "selector": "article",
+      "text": [
+        "Sponsorizzato",
+        "Sponsorizzata",
+        "Sponsored",
+        "Pubblicità"
+      ],
+      "match": "exact",
+      "comment": "Post sponsorizzati: etichetta sotto il nome utente (foglia con testo esatto). Le 'Paid partnership' dei seguiti restano visibili."
+    },
+    {
+      "id": "hide-suggested-posts",
+      "type": "hide_has_text",
+      "selector": "article",
+      "text": [
+        "Suggeriti per te",
+        "Suggerito per te",
+        "Suggested for you",
+        "Post suggeriti",
+        "Suggested posts",
+        "Suggested post"
+      ],
+      "match": "exact",
+      "comment": "Post suggeriti da account non seguiti (etichetta nell'intestazione del post)."
+    },
+    {
+      "id": "hide-suggested-accounts",
+      "type": "hide_css",
+      "selector": "main div:has(a[href^=\"/explore/people\"], a[href$=\"/related_profiles/\"]):not(:has(article)):not(:has(header))",
+      "comment": "Blocchi account suggeriti ('Suggeriti per te', 'Account che potrebbero piacerti'): contenitori col link 'Mostra tutto' verso /explore/people/ o /utente/related_profiles/ che non contengono post ne' l'intestazione del profilo (verificato su profilo pubblico)."
+    },
+    {
+      "id": "hide-explore-grid-under-search",
+      "type": "hide_css",
+      "urlPattern": "^https://www\\.instagram\\.com/explore/search",
+      "selector": "main a[href*=\"/p/\"], main a[href*=\"/reel/\"], main a[href^=\"/explore/tags/\"], main a[href^=\"/explore/locations/\"], main div:has(> div > a[href*=\"/p/\"]), main div:has(> div > a[href*=\"/reel/\"])",
+      "comment": "In Cerca nasconde la griglia Esplora (anteprime post/reel) e i risultati hashtag/luoghi; restano barra di ricerca e risultati account."
+    },
+    {
+      "id": "hide-app-links",
+      "type": "hide_css",
+      "selector": "a[href^=\"intent:\"]:not(:has(img)), a[href^=\"instagram:\"]:not(:has(img)), a[href*=\"play.google.com/store\"], a[href*=\"app.adjust.com\"], a[href*=\"apps.apple.com\"], a[href*=\"itunes.apple.com\"]",
+      "comment": "Pulsanti 'Apri app'/'Ottieni l'app' (link intent:// senza immagini, store, tracker di installazione). Le anteprime con immagine restano."
+    },
+    {
+      "id": "hide-use-app-prompts",
+      "type": "hide_has_text",
+      "selector": "div[role=\"dialog\"], div:has(> div[role=\"dialog\"]):not(:has(main)):not(:has(nav)):not(:has(article)), div:has(> * > div[role=\"dialog\"]):not(:has(main)):not(:has(nav)):not(:has(article)), div:has(> * > * > div[role=\"dialog\"]):not(:has(main)):not(:has(nav)):not(:has(article)), div:has(> * > * > * > div[role=\"dialog\"]):not(:has(main)):not(:has(nav)):not(:has(article))",
+      "within": "[role=\"dialog\"] *",
+      "text": [
+        "Usa l'app",
+        "Use the app",
+        "Apri l'app",
+        "Apri app",
+        "Open app",
+        "Apri nell'app",
+        "Open in app",
+        "Ottieni l'app",
+        "Get the app",
+        "Apri Instagram",
+        "Open Instagram",
+        "Vedi il profilo completo nell'app",
+        "See full profile in the app",
+        "Vedi questo post nell'app",
+        "See this post in the app"
+      ],
+      "match": "exact",
+      "comment": "Modali di installazione dell'app: il dialog e fino a 4 contenitori sopra (lo sfondo fisso e' 4 livelli sopra il role=dialog, verificato su profilo pubblico). I contenitori che includono main/nav/article (pagina) sono esclusi."
+    }
+  ],
   "thirdPartyBlocklist": [
     "doubleclick.net",
     "googlesyndication.com",

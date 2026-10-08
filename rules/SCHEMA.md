@@ -24,14 +24,37 @@ File: `rules/v1/<app>.json` (attualmente `instagram.json`).
 |---|---|---|
 | `id` | string | obbligatorio, univoco |
 | `enabled` | bool | default `true` |
-| `type` | `hide_css` \| `hide_js` \| `redirect` \| `style` | obbligatorio |
+| `type` | `hide_css` \| `hide_js` \| `redirect` \| `style` \| `hide_has_text` \| `block_overlay` | obbligatorio |
 | `urlPattern` | regex | opzionale; match (find) sull'URL della pagina; default tutte |
-| `selector` | string | `hide_css`: selettore CSS, applicato come `display:none!important` |
+| `selector` | string | `hide_css`: selettore CSS, applicato come `display:none!important`; `hide_has_text`: elementi candidati |
 | `css` | string | `style`: CSS arbitrario |
 | `js` | string | `hide_js`: corpo di funzione con parametro `root` che restituisce `Element[]` da nascondere |
 | `from` | regex | `redirect`: pattern sull'URL di navigazione |
 | `to` | string | `redirect`: sostituzione (`$1`...); il risultato deve iniziare con `https://` |
+| `text` | string[] | `hide_has_text`: testi cercati (case-insensitive), almeno uno, non vuoti |
+| `match` | `exact` \| `contains` | `hide_has_text`: confronto sul `textContent` (trim) dei discendenti foglia; default `exact` |
+| `within` | string | `hide_has_text`: selettore opzionale dei discendenti da esaminare (default tutti) |
+| `message` | string | `block_overlay`: testo mostrato (default "Contenuto bloccato") |
 | `comment` | string | libero |
+
+### Tipi dichiarativi (senza eval)
+
+`hide_js` usa `new Function` e **non funziona** su instagram.com (CSP senza `'unsafe-eval'`): preferire i tipi seguenti.
+
+- `hide_has_text`: nasconde (`display:none!important` inline) ogni elemento `selector` che contiene un discendente
+  foglia (nessun elemento figlio), eventualmente ristretto a `within`, il cui testo corrisponde a uno di `text`.
+  Rivalutato a ogni mutazione del DOM e a ogni cambio URL (anche SPA).
+- `block_overlay`: richiede `urlPattern`. Se l'URL corrente (anche dopo `pushState`/`replaceState`/`popstate`)
+  matcha, mostra un overlay fisso a schermo intero (solo DOM aggiunto dall'app) con `message` e il pulsante
+  "Torna al feed" (`history.back()`, altrimenti `/?variant=following`, solo al tap dell'utente); il `body`
+  della pagina viene nascosto finche' l'overlay e' attivo. Vince la prima regola che matcha.
+
+Esempi:
+
+```json
+{"id":"sp","type":"hide_has_text","selector":"article","text":["Sponsored","Sponsorizzato"],"match":"exact"}
+{"id":"rl","type":"block_overlay","urlPattern":"^https://www\.instagram\.com/reel/","message":"Reel bloccato."}
+```
 
 Campi sconosciuti vengono ignorati. Le regole invalide (regex non compilabile, campi richiesti mancanti,
 tipo sconosciuto) vengono scartate singolarmente senza invalidare il file.
