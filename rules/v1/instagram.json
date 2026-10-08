@@ -1,1 +1,14 @@
-{"version":1,"rules":[]}
+{
+  "version": 1,
+  "minAppVersion": 1,
+  "updatedAt": "2026-10-08T00:00:00Z",
+  "rules": [],
+  "thirdPartyBlocklist": [
+    "doubleclick.net",
+    "googlesyndication.com",
+    "google-analytics.com",
+    "googletagmanager.com",
+    "scorecardresearch.com",
+    "adservice.google.com"
+  ]
+}
