@@ -1,7 +1,7 @@
 {
-  "version": 2,
+  "version": 3,
   "minAppVersion": 1,
-  "updatedAt": "2026-10-08T12:00:00Z",
+  "updatedAt": "2026-10-08T18:00:00Z",
   "rules": [
     {
       "id": "redirect-home-following",
@@ -34,6 +34,13 @@
       "urlPattern": "^https://www\\.instagram\\.com/(?:reels|[^/?#]+/reels)(?:[/?#]|$)",
       "message": "Reels bloccati da FocusFeed.",
       "comment": "Feed Reels e tab Reels dei profili, anche raggiunti via SPA."
+    },
+    {
+      "id": "overlay-home-foryou",
+      "type": "block_overlay",
+      "urlPattern": "^https://www\\.instagram\\.com/(?:#.*)?$",
+      "message": "Feed Per te disattivato",
+      "comment": "Home esattamente senza query (feed 'Per te') raggiunta via navigazione SPA, es. tap sul logo. /?variant=following (Seguiti) NON e' coperto."
     },
     {
       "id": "overlay-reel-single",
