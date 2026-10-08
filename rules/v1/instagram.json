@@ -1,20 +1,21 @@
 {
-  "version": 3,
+  "version": 4,
   "minAppVersion": 1,
-  "updatedAt": "2026-10-08T18:00:00Z",
+  "updatedAt": "2026-10-09T09:00:00Z",
   "rules": [
     {
       "id": "redirect-home-following",
       "type": "redirect",
       "from": "^https://www\\.instagram\\.com/?$",
       "to": "https://www.instagram.com/?variant=following",
-      "comment": "Navigazioni main-frame verso la home ('Per te') portate al feed Seguiti. Le navigazioni SPA (pushState) non passano di qui: vedi hide-nav-home."
+      "comment": "Navigazioni main-frame verso la home ('Per te') portate al feed Seguiti. Le navigazioni SPA (pushState) non passano di qui: vedi rewrite-nav-home."
     },
     {
-      "id": "hide-nav-home",
-      "type": "hide_css",
-      "selector": "a[href=\"/\"]:has(svg), a[href=\"https://www.instagram.com/\"]:has(svg)",
-      "comment": "Nasconde icona Home e logo che portano via SPA al feed algoritmico; il feed Seguiti e' nella barra nativa."
+      "id": "rewrite-nav-home",
+      "type": "rewrite_nav",
+      "selector": "a[href=\"/\"], a[href=\"https://www.instagram.com/\"]",
+      "to": "/?variant=following",
+      "comment": "Il tap reale (isTrusted) su Home/logo, che via SPA aprirebbe il feed algoritmico, porta al feed Seguiti. Mai simulato."
     },
     {
       "id": "hide-nav-reels",

@@ -24,13 +24,13 @@ File: `rules/v1/<app>.json` (attualmente `instagram.json`).
 |---|---|---|
 | `id` | string | obbligatorio, univoco |
 | `enabled` | bool | default `true` |
-| `type` | `hide_css` \| `hide_js` \| `redirect` \| `style` \| `hide_has_text` \| `block_overlay` | obbligatorio |
+| `type` | `hide_css` \| `hide_js` \| `redirect` \| `style` \| `hide_has_text` \| `block_overlay` \| `rewrite_nav` | obbligatorio |
 | `urlPattern` | regex | opzionale; match (find) sull'URL della pagina; default tutte |
 | `selector` | string | `hide_css`: selettore CSS, applicato come `display:none!important`; `hide_has_text`: elementi candidati |
 | `css` | string | `style`: CSS arbitrario |
 | `js` | string | `hide_js`: corpo di funzione con parametro `root` che restituisce `Element[]` da nascondere |
 | `from` | regex | `redirect`: pattern sull'URL di navigazione |
-| `to` | string | `redirect`: sostituzione (`$1`...); il risultato deve iniziare con `https://` |
+| `to` | string | `redirect`: sostituzione (`$1`...); il risultato deve iniziare con `https://`. `rewrite_nav`: destinazione, inizia con `/` o `https://www.instagram.com/` |
 | `text` | string[] | `hide_has_text`: testi cercati (case-insensitive), almeno uno, non vuoti |
 | `match` | `exact` \| `contains` | `hide_has_text`: confronto sul `textContent` (trim) dei discendenti foglia; default `exact` |
 | `within` | string | `hide_has_text`: selettore opzionale dei discendenti da esaminare (default tutti) |
@@ -49,10 +49,15 @@ File: `rules/v1/<app>.json` (attualmente `instagram.json`).
   "Torna al feed" (`history.back()`, altrimenti `/?variant=following`, solo al tap dell'utente); il `body`
   della pagina viene nascosto finche' l'overlay e' attivo. Vince la prima regola che matcha.
 
+- `rewrite_nav`: richiede `selector` e `to`. Listener `click` in fase di capture: se il click e' un tap reale
+  dell'utente (`event.isTrusted`, mai simulato) su un elemento che matcha `selector` (e `urlPattern`, se presente),
+  fa `preventDefault` e `location.assign(to)`. Es. Home di Instagram `a[href="/"]` -> `/?variant=following`.
+
 Esempi:
 
 ```json
 {"id":"sp","type":"hide_has_text","selector":"article","text":["Sponsored","Sponsorizzato"],"match":"exact"}
+{"id":"nv","type":"rewrite_nav","selector":"a[href=\"/\"]","to":"/?variant=following"}
 {"id":"rl","type":"block_overlay","urlPattern":"^https://www\.instagram\.com/reel/","message":"Reel bloccato."}
 ```
 
