@@ -1,7 +1,7 @@
 {
-  "version": 4,
+  "version": 5,
   "minAppVersion": 1,
-  "updatedAt": "2026-10-09T09:00:00Z",
+  "updatedAt": "2026-10-09T11:00:00Z",
   "rules": [
     {
       "id": "redirect-home-following",
@@ -105,6 +105,12 @@
       "comment": "Pulsanti 'Apri app'/'Ottieni l'app' (link intent:// senza immagini, store, tracker di installazione). Le anteprime con immagine restano."
     },
     {
+      "id": "hide-web-only-chrome",
+      "type": "hide_css",
+      "selector": "footer:not(:has(nav)):not(:has(a[href^=\"/direct/\"])), a[href*=\"/legal/\"], a[href*=\"help.instagram.com\"], a[href*=\"about.instagram.com\"], a[href^=\"/about/\"], a[href*=\"developers.facebook.com\"]",
+      "comment": "Elementi solo-web che l'app non ha: footer del sito e suoi link (Informazioni, Aiuto, Privacy, Termini, API). La navigazione inferiore di Instagram resta intatta (footer con nav/DM esclusi)."
+    },
+    {
       "id": "hide-use-app-prompts",
       "type": "hide_has_text",
       "selector": "div[role=\"dialog\"], div:has(> div[role=\"dialog\"]):not(:has(main)):not(:has(nav)):not(:has(article)), div:has(> * > div[role=\"dialog\"]):not(:has(main)):not(:has(nav)):not(:has(article)), div:has(> * > * > div[role=\"dialog\"]):not(:has(main)):not(:has(nav)):not(:has(article)), div:has(> * > * > * > div[role=\"dialog\"]):not(:has(main)):not(:has(nav)):not(:has(article))",
@@ -118,6 +124,10 @@
         "Apri nell'app",
         "Open in app",
         "Ottieni l'app",
+        "Aggiungi alla schermata Home",
+        "Add to Home screen",
+        "Installa Instagram",
+        "Install Instagram",
         "Get the app",
         "Apri Instagram",
         "Open Instagram",
