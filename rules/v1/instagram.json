@@ -1,5 +1,5 @@
 {
-  "version": 6,
+  "version": 7,
   "minAppVersion": 1,
   "updatedAt": "2026-10-09T13:00:00Z",
   "rules": [
@@ -107,12 +107,6 @@
       ],
       "match": "exact",
       "comment": "Post suggeriti da account non seguiti (etichetta nell'intestazione del post)."
-    },
-    {
-      "id": "hide-suggested-accounts",
-      "type": "hide_css",
-      "selector": "main div:has(a[href^=\"/explore/people\"], a[href$=\"/related_profiles/\"]):not(:has(article)):not(:has(header)):not(:has(h1)):not(:has([role=\"tablist\"]))",
-      "comment": "Blocchi account suggeriti ('Suggeriti per te', 'Account che potrebbero piacerti'): contenitori col link 'Mostra tutto' verso /explore/people/ o /utente/related_profiles/ che non contengono post ne' l'intestazione del profilo (verificato su profilo pubblico). Esclusi anche contenitori con h1 o tablist (profilo): il pulsante Segui del profilo e dei risultati non e' colpito."
     },
     {
       "id": "hide-explore-grid-under-search",
