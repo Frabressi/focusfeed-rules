@@ -1,7 +1,7 @@
 {
-  "version": 5,
+  "version": 6,
   "minAppVersion": 1,
-  "updatedAt": "2026-10-09T11:00:00Z",
+  "updatedAt": "2026-10-09T13:00:00Z",
   "rules": [
     {
       "id": "redirect-home-following",
@@ -26,8 +26,15 @@
     {
       "id": "hide-nav-explore",
       "type": "hide_css",
-      "selector": "a[href^=\"/explore/\"]:not([href^=\"/explore/search\"]), a[href^=\"https://www.instagram.com/explore/\"]:not([href^=\"https://www.instagram.com/explore/search\"]), a:has(svg[aria-label=\"Esplora\"]), a:has(svg[aria-label=\"Explore\"])",
-      "comment": "Link/icone verso Esplora (inclusi hashtag, luoghi, 'Vedi tutti' dei suggeriti). Resta solo /explore/search/."
+      "selector": "a[href^=\"/explore/\"]:not([href=\"/explore/\"]):not([href^=\"/explore/search\"]), a[href^=\"https://www.instagram.com/explore/\"]:not([href=\"https://www.instagram.com/explore/\"]):not([href^=\"https://www.instagram.com/explore/search\"])",
+      "comment": "Link verso Esplora: hashtag, luoghi, 'Vedi tutti' dei suggeriti. NON nasconde la lente Cerca (href esatto /explore/, mobile web) ne' /explore/search/: la lente e' riscritta da rewrite-nav-search."
+    },
+    {
+      "id": "rewrite-nav-search",
+      "type": "rewrite_nav",
+      "selector": "a[href=\"/explore/\"], a[href=\"/explore\"], a[href=\"https://www.instagram.com/explore/\"]",
+      "to": "/explore/search/",
+      "comment": "Il tap reale (isTrusted) sulla lente Cerca della barra inferiore (href /explore/) porta alla pagina di ricerca, senza griglia Esplora. Mai simulato."
     },
     {
       "id": "overlay-reels",
@@ -65,10 +72,26 @@
         "Sponsorizzato",
         "Sponsorizzata",
         "Sponsored",
+        "Inserzione",
         "Pubblicità"
       ],
       "match": "exact",
-      "comment": "Post sponsorizzati: etichetta sotto il nome utente (foglia con testo esatto). Le 'Paid partnership' dei seguiti restano visibili."
+      "comment": "Post sponsorizzati: etichetta sotto il nome utente (foglia con testo esatto: Sponsorizzato/Inserzione/Sponsored). Le 'Paid partnership' dei seguiti restano visibili."
+    },
+    {
+      "id": "cover-sponsored-stories",
+      "type": "hide_has_text",
+      "urlPattern": "^https://www\\.instagram\\.com/stories/",
+      "selector": "section",
+      "within": "header *",
+      "text": [
+        "Inserzione",
+        "Sponsored",
+        "Sponsorizzato"
+      ],
+      "match": "exact",
+      "mode": "cover",
+      "comment": "Storie sponsorizzate: se l'header della storia corrente ha l'etichetta, la section viene coperta da uno schermo nero con avviso (pointer-events:none: i tap dell'utente passano a Instagram, nessun click/timer simulato)."
     },
     {
       "id": "hide-suggested-posts",
@@ -88,8 +111,8 @@
     {
       "id": "hide-suggested-accounts",
       "type": "hide_css",
-      "selector": "main div:has(a[href^=\"/explore/people\"], a[href$=\"/related_profiles/\"]):not(:has(article)):not(:has(header))",
-      "comment": "Blocchi account suggeriti ('Suggeriti per te', 'Account che potrebbero piacerti'): contenitori col link 'Mostra tutto' verso /explore/people/ o /utente/related_profiles/ che non contengono post ne' l'intestazione del profilo (verificato su profilo pubblico)."
+      "selector": "main div:has(a[href^=\"/explore/people\"], a[href$=\"/related_profiles/\"]):not(:has(article)):not(:has(header)):not(:has(h1)):not(:has([role=\"tablist\"]))",
+      "comment": "Blocchi account suggeriti ('Suggeriti per te', 'Account che potrebbero piacerti'): contenitori col link 'Mostra tutto' verso /explore/people/ o /utente/related_profiles/ che non contengono post ne' l'intestazione del profilo (verificato su profilo pubblico). Esclusi anche contenitori con h1 o tablist (profilo): il pulsante Segui del profilo e dei risultati non e' colpito."
     },
     {
       "id": "hide-explore-grid-under-search",

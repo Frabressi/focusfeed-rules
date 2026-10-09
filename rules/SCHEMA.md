@@ -34,6 +34,7 @@ File: `rules/v1/<app>.json` (attualmente `instagram.json`).
 | `text` | string[] | `hide_has_text`: testi cercati (case-insensitive), almeno uno, non vuoti |
 | `match` | `exact` \| `contains` | `hide_has_text`: confronto sul `textContent` (trim) dei discendenti foglia; default `exact` |
 | `within` | string | `hide_has_text`: selettore opzionale dei discendenti da esaminare (default tutti) |
+| `mode` | `hide` \| `cover` | `hide_has_text`: `hide` (default) = `display:none` sul candidato; `cover` = vedi sotto |
 | `message` | string | `block_overlay`: testo mostrato (default "Contenuto bloccato") |
 | `comment` | string | libero |
 
@@ -44,6 +45,13 @@ File: `rules/v1/<app>.json` (attualmente `instagram.json`).
 - `hide_has_text`: nasconde (`display:none!important` inline) ogni elemento `selector` che contiene un discendente
   foglia (nessun elemento figlio), eventualmente ristretto a `within`, il cui testo corrisponde a uno di `text`.
   Rivalutato a ogni mutazione del DOM e a ogni cambio URL (anche SPA).
+  Con `mode: "cover"` il candidato non viene nascosto: riceve l'attributo `data-ff-cover` (rimosso se l'etichetta
+  sparisce, es. storia successiva) e il motore aggiunge (una volta) solo CSS: un `::after` a schermo intero
+  (`position:fixed`, sfondo nero, testo "Inserzione nascosta — tocca a destra per andare avanti",
+  `pointer-events:none`) e `opacity:0` su tutti i discendenti (non `visibility:hidden`, per non togliere ai tap
+  il bersaglio che Instagram usa per avanzare). I tap dell'utente passano quindi a Instagram, che avanza/chiude la
+  storia normalmente. Nessun click simulato, timer, fetch o scroll. Es. storie sponsorizzate:
+  `{"type":"hide_has_text","urlPattern":"^https://www\.instagram\.com/stories/","selector":"section","within":"header *","text":["Inserzione","Sponsored"],"mode":"cover"}`.
 - `block_overlay`: richiede `urlPattern`. Se l'URL corrente (anche dopo `pushState`/`replaceState`/`popstate`)
   matcha, mostra un overlay fisso a schermo intero (solo DOM aggiunto dall'app) con `message` e il pulsante
   "Torna al feed" (`history.back()`, altrimenti `/?variant=following`, solo al tap dell'utente); il `body`
