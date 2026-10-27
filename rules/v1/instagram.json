@@ -1,14 +1,14 @@
 {
-  "version": 7,
+  "version": 8,
   "minAppVersion": 1,
-  "updatedAt": "2026-10-09T13:00:00Z",
+  "updatedAt": "2026-10-27T12:00:00Z",
   "rules": [
     {
       "id": "redirect-home-following",
       "type": "redirect",
-      "from": "^https://www\\.instagram\\.com/?$",
+      "from": "^https://www\\.instagram\\.com/?(?:\\?(?!(?:[^#]*&)?variant=following)[^#]*)?$",
       "to": "https://www.instagram.com/?variant=following",
-      "comment": "Navigazioni main-frame verso la home ('Per te') portate al feed Seguiti. Le navigazioni SPA (pushState) non passano di qui: vedi rewrite-nav-home."
+      "comment": "Navigazioni main-frame verso la home ('Per te', anche con parametri come ?deoia=1 dopo il login) portate al feed Seguiti. Le navigazioni SPA (pushState) non passano di qui: vedi rewrite-nav-home."
     },
     {
       "id": "rewrite-nav-home",
@@ -46,9 +46,9 @@
     {
       "id": "overlay-home-foryou",
       "type": "block_overlay",
-      "urlPattern": "^https://www\\.instagram\\.com/(?:#.*)?$",
+      "urlPattern": "^https://www\\.instagram\\.com/(?:\\?(?!(?:[^#]*&)?variant=following)[^#]*)?(?:#.*)?$",
       "message": "Feed Per te disattivato",
-      "comment": "Home esattamente senza query (feed 'Per te') raggiunta via navigazione SPA, es. tap sul logo. /?variant=following (Seguiti) NON e' coperto."
+      "comment": "Home senza variant=following (feed 'Per te', anche /?deoia=1 dopo il login) raggiunta via navigazione SPA, es. tap sul logo. /?variant=following (Seguiti) NON e' coperto."
     },
     {
       "id": "overlay-reel-single",
